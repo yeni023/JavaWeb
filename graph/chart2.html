@@ -1,0 +1,105 @@
+<!-- 파일 입력 받아서 파싱하는 부분 추가해야 함 -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Chart.js Example</title>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+</head>
+<body>
+    <canvas id="myChart" width="800" height="400"></canvas>
+	<button onclick="updateData('min')">Minimum</button>
+	<button onclick="updateData('max')">Maximum</button>
+	<button onclick="updateData('avg')">Average</button>
+    <script>
+    
+        // 데이터 파싱
+        const data = `	task1	task2	task3	task4	task5
+        core1	886	749	849	909	352	
+        core2	959	849	788	1053	324	
+        core3	942	867	930	1064	365	
+        core4	820	817	816	929	336	
+        core5	803	786	929	958	329`.split("\n");
+        
+        const cores = [];
+        const tasks = [];
+        const values = [];
+    
+        for (let i = 0; i < data.length; i++) {
+            const row = data[i].split("\t");
+            cores.push(row[0]);
+            for (let j = 1; j < row.length; j++) {
+                if (i == 0) {
+                    tasks.push(row[j]);
+                }
+                if (!values[j - 1]) { // 해당 인덱스의 값이 없으면
+                    values[j - 1] = []; // 빈 배열로 초기화
+                }
+                values[j - 1].push(Number(row[j]));
+            }
+        }
+        // 최소, 최대, 평균 값 계산
+        const minValues = [];
+        const maxValues = [];
+        const avgValues = [];
+        
+        for (let i = 0; i < values.length; i++) {
+            let nums = values[i].filter((val) => !isNaN(val));
+            minValues.push(Math.min(...nums));
+            maxValues.push(Math.max(...nums));
+            avgValues.push(nums.reduce((acc, cur) => acc + cur) / nums.length);
+        }
+        console.log(values);
+        
+        // 차트 생성
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: cores,
+                datasets: [{
+                    label: 'Minimum',
+                    data: minValues,
+                    fill: false,
+                    borderColor: 'rgb(255, 99, 132)',
+                    lineTension: 0.1
+                }, {
+                    label: 'Maximum',
+                    data: maxValues,
+                    fill: false,
+                    borderColor: 'rgb(54, 162, 235)',
+                    lineTension: 0.1
+                }, {
+                    label: 'Average',
+                    data: avgValues,
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    lineTension: 0.1
+                }]
+            },
+            options: {}
+        });
+        
+        // 데이터 업데이트 함수
+        function updateData(type) {
+            let newValues;
+            switch (type) {
+                case 'min':
+                    newValues = minValues;
+                    break;
+                case 'max':
+                    newValues = maxValues;
+                    break;
+                case 'avg':
+                    newValues = avgValues;
+                    break;
+            }
+            myChart.data.datasets.forEach((dataset, i) => {
+                dataset.data = newValues;
+            });
+            myChart.update();
+        }
+    </script>
+</body>
+</html>

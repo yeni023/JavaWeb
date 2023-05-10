@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Chart.js Example</title>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Task Performance</h1>
+
+    <div>
+      <button class="task-button" data-task="1">Task 1</button>
+      <button class="task-button" data-task="2">Task 2</button>
+      <button class="task-button" data-task="3">Task 3</button>
+      <button class="task-button" data-task="4">Task 4</button>
+      <button class="task-button" data-task="5">Task 5</button>
+    </div>
+  
+    <canvas id="chart"></canvas>
+
+    <script>
+// 초기 데이터
+const data = [
+  [886, 749, 849, 909, 352],
+  [959, 849, 788, 1053, 324],
+  [942, 867, 930, 1064, 365],
+  [820, 817, 816, 929, 336],
+  [803, 786, 929, 958, 329],
+  [814, 810, 917, 994, 357],
+  [891, 806, 898, 1060, 390],
+  [826, 813, 844, 1007, 773],
+  [890, 869, 787, 949, 387],
+  [868, 754, 818, 1061, 327]
+];
+
+// 선택한 task를 저장할 변수
+let selectedTask = 1;
+let myChart = null;
+
+// 최대값, 최소값, 평균값 계산하는 함수
+function calculateValues() {
+  const taskIndex = selectedTask - 1;
+  const taskValues = data.map(coreValues => coreValues[taskIndex]);
+  const max = Math.max(...taskValues);
+  const min = Math.min(...taskValues);
+  const avg = taskValues.reduce((acc, val) => acc + val, 0) / taskValues.length;
+  return { max, min, avg };
+}
+
+// 차트 그리는 함수
+function drawChart() {
+  const values = calculateValues();
+  const chart = document.getElementById("chart");
+  myChart = new Chart(chart, {
+    type: "line",
+    data: {
+      labels: ["core1", "core2", "core3", "core4", "core5"],
+      datasets: [
+        {
+          label: "최대값",
+          backgroundColor: "rgba(255, 99, 132, 0.2)",
+          borderColor: "rgba(255,99,132,1)",
+          borderWidth: 1,
+          pointBorderColor: "rgba(255,99,132,1)",
+          pointBackgroundColor: "#fff",
+          pointBorderWidth: 1,
+          pointRadius: 3,
+          pointHoverRadius: 6,
+          data: [values.max, values.max, values.max, values.max, values.max]
+        },
+        {
+          label: "최소값",
+          backgroundColor: "rgba(54, 162, 235, 0.2)",
+          borderColor: "rgba(54, 162, 235, 1)",
+          borderWidth: 1,
+          pointBorderColor: "rgba(54, 162, 235, 1)",
+          pointBackgroundColor: "#fff",
+          pointBorderWidth: 1,
+          pointRadius: 3,
+          pointHoverRadius: 6,
+          data: [values.min, values.min, values.min, values.min, values.min]
+        },
+        {
+          label: "평균값",
+          backgroundColor: "rgba(255, 206, 86, 0.2)",
+          borderColor: "rgba(255, 206, 86, 1)",
+          borderWidth: 1,
+          pointBorderColor: "rgba(255, 206, 86, 1)",
+          pointBackgroundColor: "#fff",
+          pointBorderWidth: 1,
+          pointRadius: 3,
+          pointHoverRadius: 6,
+        data: [values.avg, values.avg, values.avg, values.avg, values.avg]
+        }
+      ]
+    },
+    options: {
+        scales: {
+            yAxes: [
+                {
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }
+            ]
+        }
+    }});
+  }
+// task 버튼 클릭 시, 선택한 task 저장하고 차트 다시 그리기
+const taskButtons = document.querySelectorAll(".task-button");
+taskButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    selectedTask = Number(button.getAttribute("data-task"));
+    drawChart();
+  });
+});
+
+</script>
+</body>
+</html>
