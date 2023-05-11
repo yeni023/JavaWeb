@@ -1,5 +1,4 @@
-<!-- 파일 입력 받아서 파싱하는 부분 추가해야 함 -->
-<!-- core 값에 따른 task 값을 최대, 최소, 평균으로 나타낸 코드 -->
+<!-- core, task 버튼 생성은 했지만 데이터 파싱 부분으로 인해 그래프가 정상적으로 나오지 않음 -->
 
 <!DOCTYPE html>
 <html>
@@ -9,10 +8,24 @@
 	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 </head>
 <body>
-    <canvas id="myChart" width="800" height="400"></canvas>
-	<button onclick="updateData('min')">Minimum</button>
-	<button onclick="updateData('max')">Maximum</button>
-	<button onclick="updateData('avg')">Average</button>
+    <h1>Task Performance</h1>
+    <div>
+        <button class="task-button" data-task="1">TASK 1</button>
+        <button class="task-button" data-task="2">TASK 2</button>
+        <button class="task-button" data-task="3">TASK 3</button>
+        <button class="task-button" data-task="4">TASK 4</button>
+        <button class="task-button" data-task="5">TASK 5</button>
+    
+        <button class="core-button" data-task="6">CORE 1</button>
+        <button class="core-button" data-task="7">CORE 2</button>
+        <button class="core-button" data-task="8">CORE 3</button>
+        <button class="core-button" data-task="9">CORE 4</button>
+        <button class="core-button" data-task="10">CORE 5</button>
+      </div>
+    <div>
+        <canvas id="myChart"></canvas>
+    </div>
+
     <script>
     
         // 데이터 파싱
@@ -41,39 +54,48 @@
             }
         }
         // 최소, 최대, 평균 값 계산
-        const minValues = [];
-        const maxValues = [];
-        const avgValues = [];
+        const taskMinValues = [];
+        const taskMaxValues = [];
+        const taskAvgValues = [];
+        const coreMinValues = [];
+        const coreMaxValues = [];
+        const coreAvgValues = [];
         
-        for (let i = 0; i < values.length; i++) {
+        for (let i = 0; i < tasks.length; i++) {
             let nums = values[i].filter((val) => !isNaN(val));
-            minValues.push(Math.min(...nums));
-            maxValues.push(Math.max(...nums));
-            avgValues.push(nums.reduce((acc, cur) => acc + cur) / nums.length);
+            taskMinValues.push(Math.min(...nums));
+            taskMaxValues.push(Math.max(...nums));
+            taskAvgValues.push(nums.reduce((acc, cur) => acc + cur) / nums.length);
         }
-        console.log(values);
+        // console.log(values);
+        for (let i = 0; i < cores.length; i++) {
+            let nums = values[i].filter((val) => !isNaN(val));
+            coreMinValues.push(Math.min(...nums));
+            coreMaxValues.push(Math.max(...nums));
+            coreAvgValues.push(nums.reduce((acc, cur) => acc + cur) / nums.length);
+        }
         
         // 차트 생성
-        const ctx = document.getElementById('myChart').getContext('2d');
-        const myChart = new Chart(ctx, {
+        const core_ctx = document.getElementById('myChart').getContext('2d');
+        const core_myChart = new Chart(core_ctx, {
             type: 'line',
             data: {
                 labels: cores,
                 datasets: [{
                     label: 'Minimum',
-                    data: minValues,
+                    data: coreMinValues,
                     fill: false,
                     borderColor: 'rgb(255, 99, 132)',
                     lineTension: 0.1
                 }, {
                     label: 'Maximum',
-                    data: maxValues,
+                    data: coreMaxValues,
                     fill: false,
                     borderColor: 'rgb(54, 162, 235)',
                     lineTension: 0.1
                 }, {
                     label: 'Average',
-                    data: avgValues,
+                    data: coreAvgValues,
                     fill: false,
                     borderColor: 'rgb(75, 192, 192)',
                     lineTension: 0.1
@@ -96,10 +118,10 @@
                     newValues = avgValues;
                     break;
             }
-            myChart.data.datasets.forEach((dataset, i) => {
+            core_myChart.data.datasets.forEach((dataset, i) => {
                 dataset.data = newValues;
             });
-            myChart.update();
+            core_myChart.update();
         }
     </script>
 </body>
