@@ -1,0 +1,103 @@
+<!-- 파일 불러오는 코드 작성 도전! -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Graph Example</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+
+<body>
+    <input type="file" id="fileInput">
+    <div id="plot"></div>
+    <div id="buttons">
+        <button id="task1" onclick="updateChart('task1')">Task 1</button>
+        <button id="task2" onclick="updateChart('task2')">Task 2</button>
+        <button id="task3" onclick="updateChart('task3')">Task 3</button>
+        <button id="task4" onclick="updateChart('task4')">Task 4</button>
+        <button id="task5" onclick="updateChart('task5')">Task 5</button>
+    </div>
+    <div id="buttons2">
+        <button id="core1" onclick="updateChart('core1')">Core 1</button>
+        <button id="core2" onclick="updateChart('core2')">Core 2</button>
+        <button id="core3" onclick="updateChart('core3')">Core 3</button>
+        <button id="core4" onclick="updateChart('core4')">Core 4</button>
+        <button id="core5" onclick="updateChart('core5')">Core 5</button>
+    </div>
+    <script>
+        var T_data = [], C_data = [];
+        var layout = {
+            title: 'Graph Example',
+            xaxis: {
+                title: 'Task'
+            },
+            yaxis: {
+                title: 'Time (ms)'
+            }
+        };
+
+        function processData(allText) {
+            var lines = allText.split("\n");
+            console.log(lines);
+            for (var i = 1; i <= 5; i++) {
+                var t_values = lines[i].split("\t").slice(1).map(Number);
+                var c_values = lines[i].split("\t").slice(1).map(Number);
+                var x_values = ['task1', 'task2', 'task3', 'task4', 'task5'].map(function (value) {
+                    return parseInt(value.slice(-1));
+                });
+                var y_values = ['core1', 'core2', 'core3', 'core4', 'core5'].map(function (value) {
+                    return parseInt(value.slice(-1));
+                });
+                T_data.push({
+                    x: x_values,
+                    y: t_values,
+                    name: 'task' + i,
+                    type: 'line'
+                });
+                C_data.push({
+                    x: y_values,
+                    y: c_values,
+                    name: 'core' + i,
+                    type: 'line'
+                });
+            }
+            Plotly.newPlot('plot', T_data.concat(C_data), layout);
+        }
+
+        document.getElementById('fileInput').addEventListener('change', function (event) {
+            var file = event.target.files[0];
+            var reader = new FileReader();
+            reader.readAsText(file);
+            reader.onload = function (event) {
+                var contents = event.target.result;
+                processData(contents);
+            };
+        });
+
+        function updateChart(taskOrCore) {
+            var newData = [];
+            if (taskOrCore.startsWith('task')) {
+                for (var i = 0; i < T_data.length; i++) {
+                    var taskData = T_data[i];
+                    if (taskData.name === taskOrCore) {
+                        newData.push(taskData);
+                        break;
+                    }
+                }
+            }
+            else if (taskOrCore.startsWith('core')) {
+                for (var i = 0; i < C_data.length; i++) {
+                    var coreData = C_data[i];
+                    if (coreData.name === taskOrCore) {
+                        newData.push(coreData);
+                        break;
+                    }
+                }
+            }
+            Plotly.react('plot', newData, layout);
+        }
+    </script>
+</body>
+
+</html>

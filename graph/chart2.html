@@ -3,30 +3,50 @@
 
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta charset="UTF-8">
-	<title>Chart.js Example</title>
-	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <meta charset="UTF-8">
+    <title>Chart.js Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 </head>
+
 <body>
+    <input type="file" id="fileInput">
+
     <canvas id="myChart" width="800" height="400"></canvas>
-	<button onclick="updateData('min')">Minimum</button>
-	<button onclick="updateData('max')">Maximum</button>
-	<button onclick="updateData('avg')">Average</button>
+    <button onclick="updateData('min')">Minimum</button>
+    <button onclick="updateData('max')">Maximum</button>
+    <button onclick="updateData('avg')">Average</button>
+
+
     <script>
-    
+        // data = null;
+        // function readFile(file) {
+        //     const reader = new FileReader();
+        //     reader.readAsText(file);
+        //     reader.onload = (event) => {
+        //         const contents = event.target.result;
+        //         data = contents.split("\n");
+        //     };
+        // }
+
+        // const fileInput = document.getElementById('fileInput');
+        // fileInput.addEventListener('change', (event) => {
+        //     const file = event.target.files[0];
+        //     readFile(file);
+        // });
         // 데이터 파싱
         const data = `	task1	task2	task3	task4	task5
         core1	886	749	849	909	352	
         core2	959	849	788	1053	324	
         core3	942	867	930	1064	365	
         core4	820	817	816	929	336	
-        core5	803	786	929	958	329`.split("\n");
-        
+        core5	803	786	929	958	329`
+
         const cores = [];
         const tasks = [];
         const values = [];
-    
+
         for (let i = 0; i < data.length; i++) {
             const row = data[i].split("\t");
             cores.push(row[0]);
@@ -44,7 +64,7 @@
         const minValues = [];
         const maxValues = [];
         const avgValues = [];
-        
+
         for (let i = 0; i < values.length; i++) {
             let nums = values[i].filter((val) => !isNaN(val));
             minValues.push(Math.min(...nums));
@@ -52,7 +72,7 @@
             avgValues.push(nums.reduce((acc, cur) => acc + cur) / nums.length);
         }
         console.log(values);
-        
+
         // 차트 생성
         const ctx = document.getElementById('myChart').getContext('2d');
         const myChart = new Chart(ctx, {
@@ -81,7 +101,7 @@
             },
             options: {}
         });
-        
+
         // 데이터 업데이트 함수
         function updateData(type) {
             let newValues;
@@ -103,4 +123,5 @@
         }
     </script>
 </body>
+
 </html>
