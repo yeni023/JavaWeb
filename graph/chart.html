@@ -1,0 +1,131 @@
+<!-- task, core 값에 따라 꺾은선 그래프 하나로 띄우는 코드 -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Graph Example</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <body>
+    <div id="plot"></div>
+    <div id="buttons">
+      <button id="task1" onclick="updateChart('task1')">Task 1</button>
+      <button id="task2" onclick="updateChart('task2')">Task 2</button>
+      <button id="task3" onclick="updateChart('task3')">Task 3</button>
+      <button id="task4" onclick="updateChart('task4')">Task 4</button>
+      <button id="task5" onclick="updateChart('task5')">Task 5</button>
+    </div>
+    <div id="buttons2">
+      <button id="core1" onclick="updateChart('core1')">Core 1</button>
+      <button id="core2" onclick="updateChart('core2')">Core 2</button>
+      <button id="core3" onclick="updateChart('core3')">Core 3</button>
+      <button id="core4" onclick="updateChart('core4')">Core 4</button>
+      <button id="core5" onclick="updateChart('core5')">Core 5</button>
+    </div>
+    <script>
+    var T_data = [
+        {
+          x: ['task1', 'task2', 'task3', 'task4', 'task5'],
+          y: [886, 749, 849, 909, 352],
+          name: 'task1',
+          type: 'scatter'
+        },
+        {
+          x: ['task1', 'task2', 'task3', 'task4', 'task5'],
+          y: [959, 849, 788, 1053, 324],
+          name: 'task2',
+          type: 'scatter'
+        },
+        {
+          x: ['task1', 'task2', 'task3', 'task4', 'task5'],
+          y: [942, 867, 930, 1064, 365],
+          name: 'task3',
+          type: 'scatter'
+        },
+        {
+          x: ['task1', 'task2', 'task3', 'task4', 'task5'],
+          y: [820, 817, 816, 929, 336],
+          name: 'task4',
+          type: 'scatter'
+        },
+        {
+          x: ['task1', 'task2', 'task3', 'task4', 'task5'],
+          y: [803, 786, 929, 958, 329],
+          name: 'task5',
+          type: 'scatter'
+        }
+      ];
+
+    var C_data = [
+        {
+          x: ['task1', 'task2', 'task3', 'task4', 'task5'],
+          y: [886, 749, 849, 909, 352],
+          name: 'core1',
+          type: 'scatter'
+        },
+        {
+          x: ['task1', 'task2', 'task3', 'task4', 'task5'],
+          y: [959, 849, 788, 1053, 324],
+          name: 'core2',
+          type: 'scatter'
+        },
+        {
+          x: ['task1', 'task2', 'task3', 'task4', 'task5'],
+          y: [942, 867, 930, 1064, 365],
+          name: 'core3',
+          type: 'scatter'
+        },
+        {
+          x: ['task1', 'task2', 'task3', 'task4', 'task5'],
+          y: [820, 817, 816, 929, 336],
+          name: 'core4',
+          type: 'scatter'
+        },
+        {
+          x: ['task1', 'task2', 'task3', 'task4', 'task5'],
+          y: [803, 786, 929, 958, 329],
+          name: 'core5',
+          type: 'scatter'
+        }
+      ];
+      
+      var layout = {
+        title: 'Graph Example',
+        xaxis: {
+          title: 'Task'
+        },
+        yaxis: {
+          title: 'Time (ms)'
+        }
+      };
+      
+        Plotly.newPlot('plot', data, layout);
+
+        function updateChart(taskOrCore) {
+            var newData = [];
+            if (taskOrCore.startsWith('task')) {
+                for (var i = 0; i < T_data.length; i++) {
+                    var coreData = T_data[i];
+                    if (coreData.name === taskOrCore) {
+                        newData.push(coreData);
+                        break;
+                    }
+                }
+            }
+            else if (taskOrCore.startsWith('core')) {
+                for (var i = 0; i < C_data.length; i++) {
+                    var coreData = C_data[i];
+                    if (coreData.name === taskOrCore) {
+                        newData.push(coreData);
+                    }
+                }
+            }
+            // var update = {
+            //     data: newData
+            // };
+
+            Plotly.react('plot', newData, layout);
+        }
+        </script>
+    </body>
+</html>
