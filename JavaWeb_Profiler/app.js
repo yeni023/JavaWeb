@@ -16,12 +16,10 @@ let min1;
 let avg1;
 
 
+/** 포트번호 55555번 */
+app.set('port', process.env.PORT || 55555); 
+app.set('view engine', 'html'); 
 
-app.set('port', process.env.PORT || 55555);// 포트번호 55555번
-app.set('view engine', 'html'); // 
-
-/*외부 모듈 선언을 하고 app 객체를 연결하고
-watch가 true라면 HTML 파일이 변경될 때 템플릿 엔진을 다시 렌더링 하는 방식*/
 app.use(express.static('views'))
 
 
@@ -34,7 +32,7 @@ const max = [];
 const min = [];
 const average1 = [];
 
-//250개의 배열을 25개로 잘라주는 배열
+/** 250개의 배열을 25개로 잘라주는 배열 */
 var arrchannel = [
     [[], [], [], [], []],
     [[], [], [], [], []],
@@ -52,7 +50,7 @@ function TwoArray(rows, columns) {
 }
 var arr = TwoArray(50, 5);
 
-// 파일 업로드 multer  
+/**  파일 업로드 multer  */
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, './')
@@ -63,16 +61,18 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage: storage });
 
-//기본 화면인 '/files.html'를 화면에 뿌려준다. 
+/** 파일 제출 화면인 files.html을 화면에 뿌려준다. */
 app.get('', (req, res, next) => {
     res.sendFile(__dirname + '/files.html');
 })
-app.post('/as', upload.single('user'), (req, res, next) => {
+
+/** 인풋 파일을 제출하고 url 주소값을 받아와서 그에 맞는 응답을 해주는 Post */
+app.post('/as/line_graph', upload.single('user'), (req, res, next) => {
     try {
         // 파일 읽어오기
         let data = fs.readFileSync('inputFile.txt', 'utf8');
 
-        //파일 가공 숫자 데이터만 추출.
+        //파일 가공, 숫자 데이터만 추출.
         let arr = data.match(/\d+/g);
         for (let i = 0; i < arr.length; i++) {
             if (arr[i] == 1) {
@@ -113,8 +113,6 @@ app.post('/as', upload.single('user'), (req, res, next) => {
                 }
             }
         }
-
-
 
         //평균 최대 최소값을 구해주는 함수. id값에 따라 최대 최소 평균값을 max min average1에 각각 넣어줌.
         if (req.params.id == '0') {
@@ -209,15 +207,15 @@ app.post('/as', upload.single('user'), (req, res, next) => {
             }
         }
 
-        //넌적스을 이용, nunjucks.html에 값 전달.
-        res.render('nunjucks.html', { max: max, min: min, average1: average1, id: id });
+        //넌적스을 이용, line_graph.html에 값 전달.
+        res.render('line_graph.html', { max: max, min: min, average1: average1, id: id });
     } catch (err) {
         console.log(err);
     }
 });
 
-// a태그의 url 주소값을 받아와서 그에 맞는 응답을 해주는 Get
-app.get('/as/:id/:name', (req, res) => {
+/** 꺾은선 그래프 버튼을 누를 때의 onclick 이벤트 리스너의 url 주소값을 받아와서 그에 맞는 응답을 해주는 Get */
+app.get('/as/line_graph', (req, res) => {
     id = req.params.id;
     name = req.params.name;
     console.log(id, name);
@@ -315,10 +313,318 @@ app.get('/as/:id/:name', (req, res) => {
             average1.push(avg1);
         }
     }
-    res.render('nunjucks.html', { max: max, min: min, average1: average1, id: req.params.id, name: req.params.name });
+    res.render('line_graph.html', { max: max, min: min, average1: average1, id: req.params.id, name: req.params.name });
 });
 
-//평균을 구해주는 함수
+/** 원형 그래프 버튼을 누를 때의 onclick 이벤트 리스너의 url 주소값을 받아와서 그에 맞는 응답을 해주는 Get */
+app.get('/as/circle_graph', (req, res) => {
+    id = req.params.id;
+    name = req.params.name;
+    console.log(id, name);
+    max.splice(0);
+    min.splice(0);
+    average1.splice(0);
+    if (req.params.id == '0') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[0][i]);
+            min1 = Math.min.apply(null, arrchannel[0][i]);
+            avg1 = average(arrchannel[0][i]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '1') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[1][i]);
+            min1 = Math.min.apply(null, arrchannel[1][i]);
+            avg1 = average(arrchannel[1][i]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '2') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[2][i]);
+            min1 = Math.min.apply(null, arrchannel[2][i]);
+            avg1 = average(arrchannel[2][i]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '3') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[3][i]);
+            min1 = Math.min.apply(null, arrchannel[3][i]);
+            avg1 = average(arrchannel[3][i]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '4') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[4][i]);
+            min1 = Math.min.apply(null, arrchannel[4][i]);
+            avg1 = average(arrchannel[4][i]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '5') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[i][0]);
+            min1 = Math.min.apply(null, arrchannel[i][0]);
+            avg1 = average(arrchannel[i][0]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '6') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[i][1]);
+            min1 = Math.min.apply(null, arrchannel[i][1]);
+            avg1 = average(arrchannel[i][1]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '7') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[i][2]);
+            min1 = Math.min.apply(null, arrchannel[i][2]);
+            avg1 = average(arrchannel[i][2]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '8') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[i][3]);
+            min1 = Math.min.apply(null, arrchannel[i][3]);
+            avg1 = average(arrchannel[i][3]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '9') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[i][4]);
+            min1 = Math.min.apply(null, arrchannel[i][4]);
+            avg1 = average(arrchannel[i][4]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    }
+    res.render('circle_graph.html', { max: max, min: min, average1: average1, id: req.params.id, name: req.params.name });
+});
+
+/** 각 버튼을 눌렀을 때의 onclick 이벤트 리스너의 url 주소값을 받아와서 그에 맞는 응답을 해주는 Get */ 
+/** 꺾은선 그래프의 화면을 보여줌 */
+app.get('/as/line_graph/:id/:name', (req, res) => {
+    id = req.params.id;
+    name = req.params.name;
+    console.log(id, name);
+    max.splice(0);
+    min.splice(0);
+    average1.splice(0);
+    if (req.params.id == '0') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[0][i]);
+            min1 = Math.min.apply(null, arrchannel[0][i]);
+            avg1 = average(arrchannel[0][i]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '1') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[1][i]);
+            min1 = Math.min.apply(null, arrchannel[1][i]);
+            avg1 = average(arrchannel[1][i]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '2') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[2][i]);
+            min1 = Math.min.apply(null, arrchannel[2][i]);
+            avg1 = average(arrchannel[2][i]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '3') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[3][i]);
+            min1 = Math.min.apply(null, arrchannel[3][i]);
+            avg1 = average(arrchannel[3][i]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '4') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[4][i]);
+            min1 = Math.min.apply(null, arrchannel[4][i]);
+            avg1 = average(arrchannel[4][i]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '5') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[i][0]);
+            min1 = Math.min.apply(null, arrchannel[i][0]);
+            avg1 = average(arrchannel[i][0]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '6') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[i][1]);
+            min1 = Math.min.apply(null, arrchannel[i][1]);
+            avg1 = average(arrchannel[i][1]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '7') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[i][2]);
+            min1 = Math.min.apply(null, arrchannel[i][2]);
+            avg1 = average(arrchannel[i][2]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '8') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[i][3]);
+            min1 = Math.min.apply(null, arrchannel[i][3]);
+            avg1 = average(arrchannel[i][3]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '9') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[i][4]);
+            min1 = Math.min.apply(null, arrchannel[i][4]);
+            avg1 = average(arrchannel[i][4]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    }
+    res.render('line_graph.html', { max: max, min: min, average1: average1, id: req.params.id, name: req.params.name });
+});
+
+/** 각 버튼을 눌렀을 때의 onclick 이벤트 리스너의 url 주소값을 받아와서 그에 맞는 응답을 해주는 Get */ 
+/** 원형 그래프의 화면을 보여줌 */
+app.get('/as/circle_graph/:id/:name', (req, res) => {
+    id = req.params.id;
+    name = req.params.name;
+    console.log(id, name);
+    max.splice(0);
+    min.splice(0);
+    average1.splice(0);
+    if (req.params.id == '0') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[0][i]);
+            min1 = Math.min.apply(null, arrchannel[0][i]);
+            avg1 = average(arrchannel[0][i]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '1') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[1][i]);
+            min1 = Math.min.apply(null, arrchannel[1][i]);
+            avg1 = average(arrchannel[1][i]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '2') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[2][i]);
+            min1 = Math.min.apply(null, arrchannel[2][i]);
+            avg1 = average(arrchannel[2][i]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '3') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[3][i]);
+            min1 = Math.min.apply(null, arrchannel[3][i]);
+            avg1 = average(arrchannel[3][i]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '4') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[4][i]);
+            min1 = Math.min.apply(null, arrchannel[4][i]);
+            avg1 = average(arrchannel[4][i]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '5') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[i][0]);
+            min1 = Math.min.apply(null, arrchannel[i][0]);
+            avg1 = average(arrchannel[i][0]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '6') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[i][1]);
+            min1 = Math.min.apply(null, arrchannel[i][1]);
+            avg1 = average(arrchannel[i][1]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '7') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[i][2]);
+            min1 = Math.min.apply(null, arrchannel[i][2]);
+            avg1 = average(arrchannel[i][2]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '8') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[i][3]);
+            min1 = Math.min.apply(null, arrchannel[i][3]);
+            avg1 = average(arrchannel[i][3]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    } else if (req.params.id == '9') {
+        for (let i = 0; i < arrchannel.length; i++) {
+            max1 = Math.max.apply(null, arrchannel[i][4]);
+            min1 = Math.min.apply(null, arrchannel[i][4]);
+            avg1 = average(arrchannel[i][4]);
+            max.push(max1);
+            min.push(min1);
+            average1.push(avg1);
+        }
+    }
+    res.render('circle_graph.html', { max: max, min: min, average1: average1, id: req.params.id, name: req.params.name });
+});
+
+/** 평균을 구해주는 함수 */
 function average(arrchannel) {
     let average = 0;
     let sum = 0;
@@ -329,6 +635,7 @@ function average(arrchannel) {
     return average;
 }
 
+/** 서버를 실행할 때, 이벤트 리스너 */
 app.listen(app.get('port'), () => {
     console.log(app.get('port'), '번 에서 대기 중');
 });

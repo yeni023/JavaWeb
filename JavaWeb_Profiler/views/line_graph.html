@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>profiler - 5eagles</title>
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .button {
+            box-shadow: 0px 0px 0px 0px #a4e271;
+            background:linear-gradient(to bottom, #89c403 5%, #77a809 100%);
+            background-color:#89c403;
+            border-radius:18px;
+            border:1px solid #74b807;
+            display:inline-block;
+            cursor:pointer;
+            color:#ffffff;
+            font-family:Verdana;
+            font-size:16px;
+            font-weight:bold;
+            font-style:italic;
+            padding:13px 30px;
+            text-decoration:none;
+            text-shadow:3px -1px 0px #528009;
+        }
+        .button:hover {
+            background:linear-gradient(to bottom, #77a809 5%, #89c403 100%);
+            background-color:#c9f907;
+        }
+        .button:active {
+            position:relative;
+            top:1px;
+            font-size: 20px;
+        }
+        h2{
+            text-align: center;
+        }
+        .btn{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .button{
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+
+<body>
+    <div id="container" style="width: 1800px; height: 500px; margin: 0 auto"></div>
+    <script language="JavaScript">
+        let index;
+        let data1 = ["{{max}}"];
+        let data2 = ["{{min}}"];
+        let data3 = ["{{average1}}"];
+        let name2 = "{{name}}";
+        let id = "{{id}}";
+
+        $(document).ready(function () {
+            switch(id){
+                case "0":
+                    var title = {text: "core1의 Task별 수행능력"};
+                    break;
+                case "1":
+                    var title = {text: "core2의 Task별 수행능력"};
+                    break;
+                case "2":
+                    var title = {text: "core3의 Task별 수행능력"};
+                    break;
+                case "3":
+                    var title = {text: "core4의 Task별 수행능력"};
+                    break;
+                case "4":
+                    var title = {text: "core5의 Task별 수행능력"};
+                    break;
+                case "5":
+                    var title = {text: "Task1의 core별 수행능력"};
+                    break;
+                case "6":
+                    var title = {text: "Task2의 core별 수행능력"};
+                    break;
+                case "7":
+                    var title = {text: "Task3의 core별 수행능력"};
+                    break;
+                case "8":
+                    var title = {text: "Task4의 core별 수행능력"};
+                    break;
+                case "9":
+                    var title = {text: "Task5의 core별 수행능력"};
+                    break;
+                default:
+                    var title = {text: "독수리 오남매"};
+                    break;
+            };
+
+            var subtitle = {
+                text: "Profiler-5eagles"
+            };            
+            
+            if (name2 === "core") {
+                var xAxis = {
+                    categories: ["core1", "core2", "core3", "core4", "core5"]
+                };
+            } else {
+                var xAxis = {
+                    categories: ["task1", "task2", "task3", "task4", "task5"]
+                };
+            }
+
+            var yAxis = {
+                title: {
+                    text: "value",
+                },
+                plotLines: [
+                    {
+                        value: 0,
+                        width: 1,
+                        color: "#808080",
+                    },
+                ],
+            };
+
+            var tooltip = {
+                valueSuffix: "\xB0C",
+            };
+
+            var legend = {
+                layout: "vertical",
+                align: "right",
+                verticalAlign: "middle",
+                borderWidth: 0,
+            };
+            
+    
+            var series = [
+                {
+                    name: "max",
+                    data: [parseInt("{{max[0]}}"), parseInt("{{max[1]}}"), parseInt("{{max[2]}}"), parseInt("{{max[3]}}"), parseInt("{{max[4]}}")],
+                    color: "#ff0000",
+                },
+                {
+                    name: "min",
+                    data: [parseInt("{{min[0]}}"), parseInt("{{min[1]}}"), parseInt("{{min[2]}}"), parseInt("{{min[3]}}"), parseInt("{{min[4]}}")],
+                    color: "#0000ff",
+                },
+                {
+                    name: "average1",
+                    data: [parseInt("{{average1[0]}}"), parseInt("{{average1[1]}}"), parseInt("{{average1[2]}}"), parseInt("{{average1[3]}}"), parseInt("{{average1[4]}}")],
+                    color: "#00ff00",
+                },
+            ];            
+
+            var json = {};
+
+            json.title = title;
+            json.subtitle = subtitle;
+            json.xAxis = xAxis;
+            json.yAxis = yAxis;
+            json.tooltip = tooltip;
+            json.legend = legend;
+            json.series = series;
+
+            $("#container").highcharts(json);
+        });
+    </script>
+    <h2>코어단위</h2>
+    <div class="btn">
+        <button class="button" onclick='location.href="/as/line_graph/0/core1"'>core1</button>
+        <button class="button" onclick='location.href="/as/line_graph/1/core2"'>core2</button>
+        <button class="button" onclick='location.href="/as/line_graph/2/core3"'>core3</button>
+        <button class="button" onclick='location.href="/as/line_graph/3/core4"'>core4</button>
+        <button class="button" onclick='location.href="/as/line_graph/4/core5"'>core5</button>
+    </div>
+    <br>
+    <h2>작업단위</h2>
+    <div class="btn">
+        <button class="button" onclick='location.href="/as/line_graph/5/core"'>Task1</button>
+        <button class="button" onclick='location.href="/as/line_graph/6/core"'>Task2</button>
+        <button class="button" onclick='location.href="/as/line_graph/7/core"'>Task3</button>
+        <button class="button" onclick='location.href="/as/line_graph/8/core"'>Task4</button>
+        <button class="button" onclick='location.href="/as/line_graph/9/core"'>Task5</button>
+    </div>
+    <br>
+    <h2>그래프 타입</h2>
+    <div class="btn">
+        <button class="button graphType" onclick='location.href="/as/line_graph"'>꺾은선 그래프</button>
+        <button class="button graphType" onclick='location.href="/as/circle_graph"'>원형 그래프</button>
+    </div>
+
+</body>
+
+</html>
